@@ -1,0 +1,47 @@
+{
+    "Start": "PAWN",
+    "Entries":[
+        {
+            "clue": "furry feet",
+            "answer": "PAWS"
+        },
+        {
+            "clue": "mass seating?",
+            "answer": "PEWS"
+        },
+        {
+            "clue": "Bic Clic Stics",
+            "answer": "PENS"
+        },
+        {
+            "clue": "pots partners",
+            "answer": "PANS"
+        },
+        {
+            "clue": "without",
+            "answer": "SANS"
+        },
+        {
+            "clue": "you ____ my battleship",
+            "answer": "SANK"
+        },
+        {
+            "clue": "big bag",
+            "answer": "SACK"
+        },
+        {
+            "clue": "puppet type",
+            "answer": "SOCK"
+        },
+        {
+            "clue": "canal feature",
+            "answer": "LOCK"
+        },
+        {
+            "clue": "behold!",
+            "answer": "LOOK"
+        }
+    ],
+    "End": "ROOK"
+
+}

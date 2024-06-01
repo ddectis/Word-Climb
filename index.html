@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./assets/style/style.css?" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Word Climb</title>
+    <title></title>
+</head>
+
+<body>
+
+    <div class="title">
+        <h1>Word Climb</h1>
+    </div>
+    <div id="intro">
+        <div class="rules">
+            <h2><u>To Start...</u></h2>
+            <ul>
+                <li>Enter any 4 letter word</li>
+                <li>Subsequent words may change only 1 letter</li>
+            </ul>
+        </div>
+        <div class="rules">
+            <h2><u>Game Over If...</u></h2>
+            <ul>
+                <li>You select an invalid word</li>
+                <li>You repeat a word</li>
+            </ul>
+        </div>
+        <button id="clearIntro">Continue</button>
+        <div>
+            <input type="checkbox" id="clearIntroNextTime" name="clearIntroNextTime" value="checkboxValue">
+            <label for="clearIntroNextTime">Don't Show Next Time</label>
+        </div>
+
+
+    </div>
+
+    <div class="gameContainer">
+        <div id="highScoreContainer">
+            <div>High: </div>
+            <div id="highScore">0</div>
+        </div>
+        <div class="gameInfo">
+            <div>
+                Combo:
+            </div>
+            <div id="score">0</div>
+        </div>
+        
+        <div class="inputBlock">
+            <input type="text" maxLength=1 class="guessInput" id="0">
+            <input type="text" maxLength=1 class="guessInput" id="1">
+            <input type="text" maxLength=1 class="guessInput" id="2">
+            <input type="text" maxLength=1 class="guessInput" id="3">
+        </div>
+        <div id="invalidGuess" class="hide">INVALID GUESS</div>
+        <div id="lastGuessHolder">
+            <div>Last Guess:</div>
+            <div id="lastGuess"></div>
+        </div>
+
+    </div>
+
+    <div id="gameOver" class="hide">
+        <div id="gameOverInfo">
+            <h2>Game Over!</h2>
+            <div id="gameOverReason"></div>
+            <div id="gameOverScore"></div>
+        </div>
+
+        <button id="playAgainButton">Play Again</button>
+    </div>
+    <script type="module" src="./assets/scripts/index.js"></script>
+</body>
+
+</html>
