@@ -296,6 +296,7 @@ inputFields.forEach((input) => input.addEventListener("keyup", handleInput));
 
 const dictionary = await loadDictionary();
 console.log(dictionary);
+
 if (localStorage.getItem("highScore") !== null) {
    updatePrintedHighScore();
 }
