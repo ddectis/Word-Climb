@@ -290,24 +290,67 @@ function randomizeStartingWord() {
    const rndLendth = dictionary.length;
    const startingWordIndex = getRandomInt(0, rndLendth);
    const startingWord = dictionary[startingWordIndex];
+   const possibleConnections = findAllPossibleNextWords(startingWord);
+   const minimumConnections = 15; //randomized word must connect to at least this many other words to be a valid selection
    console.log(dictionary[startingWordIndex]);
-   //const startingWordIndicator = document.getElementById("startingWord");
-   //startingWordIndicator.innerText = startingWord;
-   updateTopCharacters(startingWord);
-   lastGuess = startingWord;
+   console.log("Possible connections:"  + possibleConnections.length)
+   if (possibleConnections.length > minimumConnections) {
+      
+      //const startingWordIndicator = document.getElementById("startingWord");
+      //startingWordIndicator.innerText = startingWord;
+      console.log("accepting starting word");
+      updateTopCharacters(startingWord);
+      lastGuess = startingWord;
+      randomizeTargetWord();
+   } else {
+      console.log("rerolling starting word...")
+      randomizeStartingWord();
+   }
 }
 
 function randomizeTargetWord() {
-   const rndLendth = dictionary.length;
-   const targetWordIndex = getRandomInt(0, rndLendth);
-   targetWord = dictionary[targetWordIndex];
-   console.log(targetWord);
-   updateBottomCharacters(targetWord);
+   let currentTarget = lastGuess;
+   let nextPossibleTargets = [];
+   let pastLinksToTarget = [];
+   const linksToTraverse = 5;
+   for (let i = 0; i < linksToTraverse; i++) {
+      nextPossibleTargets = findAllPossibleNextWords(currentTarget);
+      console.log(nextPossibleTargets);
+      currentTarget = selectNextWordLink(
+         pastLinksToTarget,
+         nextPossibleTargets
+      );
+      pastLinksToTarget.push(currentTarget);
+      console.log("Selected: " + currentTarget);
+   }
+   console.log(currentTarget)
+   updateBottomCharacters(currentTarget);
+   const solvableInfo = document.getElementById("solvableInfo")
+   solvableInfo.innerText = `Solvable in ${linksToTraverse} moves`
 }
 
-function findAllPossibleNextWords() {
-   console.log(lastGuess);
-   const searchString = lastGuess;
+function selectNextWordLink(pastLinksToTarget, nextPossibleTargets) {
+   const rnd = getRandomInt(0, nextPossibleTargets.length - 1);
+   console.log("Rnd: " + rnd);
+   const nextLink = nextPossibleTargets[rnd];
+   console.log("past: " + pastLinksToTarget);
+   console.log("nextLink: " + nextLink);
+   if (!pastLinksToTarget.includes(nextLink)) {
+      console.log("returning " + nextLink)
+      return nextLink;
+   } else {
+      console.log("past links already contains " + nextLink + " not returning")
+      selectNextWordLink(pastLinksToTarget, nextPossibleTargets);
+   }
+}
+
+function walkDownToNextPossibility(searchString) {
+   return (possibleNextWords = findAllPossibleNextWords(searchString));
+}
+
+function findAllPossibleNextWords(currentWord) {
+   console.log(currentWord);
+
    const alphabet = [
       "A",
       "B",
@@ -338,9 +381,9 @@ function findAllPossibleNextWords() {
    ];
    let automatedMatches = [];
 
-   for (let guessLetter = 0; guessLetter < lastGuess.length; guessLetter++) {
-      let tmpString = lastGuess;
-      console.log("changing " + lastGuess[guessLetter])
+   for (let guessLetter = 0; guessLetter < 4; guessLetter++) {
+      let tmpString = currentWord;
+      //console.log("changing " + lastGuess[guessLetter])
       for (
          let changeLetter = 0;
          changeLetter < alphabet.length;
@@ -351,17 +394,20 @@ function findAllPossibleNextWords() {
             guessLetter,
             alphabet[changeLetter]
          );
-         console.log("swapping in a " + alphabet[changeLetter] + " Result: " + tmpString)
-         if (dictionaryLookup(tmpString)){
-            console.log("adding " + tmpString)
-            if (!automatedMatches.includes(tmpString) && tmpString !== lastGuess){
-               automatedMatches.push(tmpString)
+         //console.log("swapping in a " + alphabet[changeLetter] + " Result: " + tmpString)
+         if (dictionaryLookup(tmpString)) {
+            //console.log("adding " + tmpString)
+            if (
+               !automatedMatches.includes(tmpString) &&
+               tmpString !== currentWord
+            ) {
+               automatedMatches.push(tmpString);
             }
-            
-         };
+         }
       }
    }
-   console.log("Automated Matches Found: " + automatedMatches)
+   console.log("Automated Matches Found: " + automatedMatches);
+   return automatedMatches;
 }
 
 function replaceCharacter(str, index, newChar) {
@@ -369,8 +415,7 @@ function replaceCharacter(str, index, newChar) {
 }
 
 function dictionaryLookup(value) {
-   return dictionary.some( word => word === value)
-   
+   return dictionary.some((word) => word === value);
 }
 
 //above the user input boxes, we'll show the starting word initially
@@ -387,7 +432,7 @@ function updateTopCharacters(value) {
 function updateBottomCharacters(value) {
    const targetWordIndicator = document.getElementById("targetWord");
    targetWordIndicator.innerHTML = "";
-   for (let i = 0; i < value.length; i++) {
+   for (let i = 0; i < 4; i++) {
       const template = `<div class="character">${value[i]}</div>`;
       targetWordIndicator.innerHTML += template;
    }
@@ -447,4 +492,3 @@ if (localStorage.getItem("highScore") !== null) {
 }
 
 randomizeStartingWord();
-randomizeTargetWord();
