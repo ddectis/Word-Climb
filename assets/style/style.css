@@ -132,7 +132,7 @@ button {
 }
 
 .gameInfo {
-    padding: 20px;
+    padding: 15px;
     background-color: var(--text-color);
     color: var(--background-color);
     margin: 5px;
@@ -140,7 +140,7 @@ button {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    font-size: 2em;
+    font-size: 1em;
 }
 
 #intro {
@@ -270,8 +270,6 @@ h2 {
 }
 
 .vibrate {
-    display: inline-block;
-    /* Ensure the element respects transforms */
     animation: vibrate 0.2s linear infinite;
 }
 

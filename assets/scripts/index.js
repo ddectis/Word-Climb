@@ -96,7 +96,8 @@ function validateGuess(guess) {
                " prev: " +
                lastGuess
          );
-         gameOver(matchingLetters, previouslyGuessed);
+         //gameOver(matchingLetters, previouslyGuessed);
+         indicateInvalidEntry();
       }
    } else {
       console.log("4 characters not entered");
@@ -150,15 +151,18 @@ function checkDictionary(guess) {
       validateGuess(guess);
    } else {
       console.log("match not found");
-      //invalidGuessIndicator.classList.remove("hide");
-      const gameContainer = document.querySelector(".gameContainer");
-      gameContainer.classList.add("vibrate");
-      setTimeout(() => {
-         gameContainer.classList.remove("vibrate");
-      }, 500);
+      indicateInvalidEntry();
    }
 
    clearInputs();
+}
+
+function indicateInvalidEntry() {
+   const gameContainer = document.querySelector(".gameContainer");
+   document.body.classList.add("vibrate");
+   setTimeout(() => {
+      document.body.classList.remove("vibrate");
+   }, 500);
 }
 
 function recordSuccessfulGuess(guess) {
@@ -180,7 +184,7 @@ function checkForLevelComplete() {
       updatePrintedLevel();
       randomizeStartingWord();
       randomizeTargetWord();
-      logLastGuess("")
+      logLastGuess("");
    }
 }
 
@@ -242,7 +246,6 @@ function gameOver(matchingLetters, previouslyGuessed) {
       clearInputs();
       randomizeStartingWord();
       randomizeTargetWord();
-      lastGuessHolder.innerText = "";
       gameContainer.classList.remove("hide");
       gameOverElement.classList.add("hide");
       if (!invalidGuessIndicator.classList.contains("hide")) {
@@ -274,7 +277,7 @@ function selectFirstInput() {
 function logLastGuess(lastGuess) {
    console.log("Logging: " + lastGuess);
    //lastGuessHolder.innerText = lastGuess;
-   updateTopCharacters(lastGuess)
+   updateTopCharacters(lastGuess);
 }
 
 function getRandomInt(min, max) {
@@ -299,31 +302,95 @@ function randomizeTargetWord() {
    const targetWordIndex = getRandomInt(0, rndLendth);
    targetWord = dictionary[targetWordIndex];
    console.log(targetWord);
-   updateBottomCharacters(targetWord)
+   updateBottomCharacters(targetWord);
 }
 
-function findAllPossibleNextWords(){
+function findAllPossibleNextWords() {
+   console.log(lastGuess);
+   const searchString = lastGuess;
+   const alphabet = [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z",
+   ];
+   let automatedMatches = [];
 
+   for (let guessLetter = 0; guessLetter < lastGuess.length; guessLetter++) {
+      let tmpString = lastGuess;
+      console.log("changing " + lastGuess[guessLetter])
+      for (
+         let changeLetter = 0;
+         changeLetter < alphabet.length;
+         changeLetter++
+      ) {
+         tmpString = replaceCharacter(
+            tmpString,
+            guessLetter,
+            alphabet[changeLetter]
+         );
+         console.log("swapping in a " + alphabet[changeLetter] + " Result: " + tmpString)
+         if (dictionaryLookup(tmpString)){
+            console.log("adding " + tmpString)
+            if (!automatedMatches.includes(tmpString) && tmpString !== lastGuess){
+               automatedMatches.push(tmpString)
+            }
+            
+         };
+      }
+   }
+   console.log("Automated Matches Found: " + automatedMatches)
 }
 
-//above the user input boxes, we'll show the starting word initially 
+function replaceCharacter(str, index, newChar) {
+   return str.substring(0, index) + newChar + str.substring(index + 1);
+}
+
+function dictionaryLookup(value) {
+   return dictionary.some( word => word === value)
+   
+}
+
+//above the user input boxes, we'll show the starting word initially
 //and then the last word subsequently
-function updateTopCharacters(value){
+function updateTopCharacters(value) {
    const startingWordIndicator = document.getElementById("startingWord");
-   startingWordIndicator.innerHTML = ""
-   for (let i = 0; i < value.length; i++){
-      const template = `<div class="character">${value[i]}</div>`
+   startingWordIndicator.innerHTML = "";
+   for (let i = 0; i < value.length; i++) {
+      const template = `<div class="character">${value[i]}</div>`;
       startingWordIndicator.innerHTML += template;
    }
 }
 
-function updateBottomCharacters(value){
-   const targetWordIndicator = document.getElementById("targetWord")
-   for (let i = 0; i < value.length; i++){
-      const template = `<div class="character">${value[i]}</div>`
+function updateBottomCharacters(value) {
+   const targetWordIndicator = document.getElementById("targetWord");
+   targetWordIndicator.innerHTML = "";
+   for (let i = 0; i < value.length; i++) {
+      const template = `<div class="character">${value[i]}</div>`;
       targetWordIndicator.innerHTML += template;
    }
-
 }
 
 document.body.addEventListener("keydown", function (event) {
@@ -363,6 +430,9 @@ document.body.addEventListener("keydown", function (event) {
       //but on subsequent guesses, the guess first has to fit the rules of the game
       //i.e. 3 of 4 letters must be the same
       checkDictionary(readPlayerGuess());
+   }
+   if (event.key === "`") {
+      findAllPossibleNextWords();
    }
 });
 
