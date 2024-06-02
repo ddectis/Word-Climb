@@ -44,24 +44,46 @@
             <div>High: </div>
             <div id="highScore">0</div>
         </div>
-        <div class="gameInfo">
-            <div>
-                Combo:
+        <div class="gameOverview">
+            <div class="gameInfo">
+                <div>
+                    Level
+                </div>
+                <div id="level">1</div>
             </div>
-            <div id="score">0</div>
+            <div class="gameInfo">
+                <div>
+                    Combo:
+                </div>
+                <div id="score">0</div>
+            </div>
         </div>
-        
-        <div class="inputBlock">
-            <input type="text" maxLength=1 class="guessInput" id="0">
-            <input type="text" maxLength=1 class="guessInput" id="1">
-            <input type="text" maxLength=1 class="guessInput" id="2">
-            <input type="text" maxLength=1 class="guessInput" id="3">
+
+
+        <div class="characterHolder">
+            <div class="characterHolderHeading">Current</div>
+            <div id="startingWord"></div>
         </div>
+        <div class="characterHolder">
+            <div class="characterHolderHeading">
+                Next
+            </div>
+            <div class="inputBlock">
+                <input type="text" maxLength=1 class="guessInput" id="0">
+                <input type="text" maxLength=1 class="guessInput" id="1">
+                <input type="text" maxLength=1 class="guessInput" id="2">
+                <input type="text" maxLength=1 class="guessInput" id="3">
+            </div>
+        </div>
+
+
         <div id="invalidGuess" class="hide">INVALID GUESS</div>
-        <div id="lastGuessHolder">
-            <div>Last Guess:</div>
-            <div id="lastGuess"></div>
+
+        <div class="characterHolder">
+            <div id="targetWord"></div>
+            <div class="characterHolderHeading">Goal</div>
         </div>
+
 
     </div>
 

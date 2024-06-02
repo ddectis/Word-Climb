@@ -78,21 +78,27 @@ body {
 .inputBlock {
     background-color: var(--text-color);
     color: var(--background-color);
-    padding: 20px;
+    padding-bottom: 10px;
     border-radius: var(--standard-border-radius);
     display: flex;
     justify-content: center;
 }
 
 #startingWord,
-#endingWord {
+#endingWord,
+#targetWord {
     font-weight: bold;
+    display: flex;
 }
 
 .clueGroup {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.gameOverview {
+    display: flex;
 }
 
 .success,
@@ -123,14 +129,13 @@ button {
     display: flex;
     justify-content: center;
     flex-direction: column;
-    align-items: flex-end;
 }
 
 .gameInfo {
     padding: 20px;
     background-color: var(--text-color);
     color: var(--background-color);
-    margin-block: 25px;
+    margin: 5px;
     border-radius: var(--standard-border-radius);
     display: flex;
     width: 100%;
@@ -138,71 +143,136 @@ button {
     font-size: 2em;
 }
 
-#intro{
+#intro {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.rules{
+.rules {
     font-size: 1em;
     background-color: var(--text-color);
     color: var(--background-color);
-    padding:20px;
+    padding: 20px;
     border-radius: var(--standard-border-radius);
     margin-block: 20px;
-    max-width: 95%;
+    width: 95%;
 }
 
-ul{
+ul {
     margin-left: 15px;
 }
 
-li{
+li {
     margin-block: 10px;
 }
 
-h1{
+h1 {
     font-weight: bold;
 }
 
-h2{
+h2 {
     font-style: italic;
 }
 
-#gameOver{
+.wordGroup {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 10px;
+    padding-right: 20%;
+}
+
+#gameOver {
     width: 95%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-#gameOverInfo{
+#gameOverInfo {
     background-color: var(--text-color);
     color: var(--background-color);
     margin: 20px;
     width: 100%;
     text-align: center;
-    padding:20px;
+    padding: 20px;
 }
 
-#highScoreContainer{
+#highScoreContainer {
     display: flex;
     width: 33%;
     justify-content: space-between;
 }
 
-#lastGuessHolder{
+#lastGuessHolder {
     width: 100%;
     text-align: left;
     padding-block: 20px;
 }
 
-#invalidGuess{
+#invalidGuess {
     text-align: center;
     width: 100%;
     padding-block: 5px;
     font-weight: bold;
+}
+
+.characterHolder {
+    padding-inline: 20px;
+    padding-block: 5px;
+    background-color: var(--text-color);
+    color: var(--background-color);
+    margin-block: 5px;
+    border-radius: var(--standard-border-radius);
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    font-size: 2em;
+    flex-direction: column;
+    align-items: center;
+}
+
+.characterHolderHeading {
+    font-size: .5em;
+}
+
+.character {
+    background: var(--secondary-background);
+    color: var(--text-color);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-inline: 5px;
+    margin-block: 5px;
+}
+
+@keyframes vibrate {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-2px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(2px);
+    }
+}
+
+.vibrate {
+    display: inline-block;
+    /* Ensure the element respects transforms */
+    animation: vibrate 0.2s linear infinite;
 }
 
 .hide {
