@@ -38,9 +38,9 @@ img {
 
 body {
     --standard-border-radius: 20px;
-    --background-color: #f1e3d3;
-    --secondary-background: #f7a053a3;
-    --text-color: #5c3b1e;
+    --background-color: #828bdc;
+    --secondary-background: #d5d5d5c0;
+    --text-color: #1c1c1cbd;
     font-family: 'JetBrains Mono', monospace;
     background-color: var(--background-color);
     color: var(--text-color);
@@ -76,9 +76,8 @@ body {
 }
 
 .inputBlock {
-    background-color: var(--text-color);
     color: var(--background-color);
-    padding-bottom: 10px;
+    padding: 10px;
     border-radius: var(--standard-border-radius);
     display: flex;
     justify-content: center;
@@ -129,6 +128,7 @@ button {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    width: 95%;
 }
 
 .gameInfo {
@@ -149,17 +149,27 @@ button {
     align-items: center;
 }
 
+.rulesHolder{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .rules {
     font-size: 1em;
     background-color: var(--text-color);
     color: var(--background-color);
     padding: 20px;
     border-radius: var(--standard-border-radius);
-    margin-block: 20px;
+    margin: 20px;
     width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-#solvableInfo{
+#solvableInfo {
     text-align: center;
 }
 
@@ -222,6 +232,8 @@ h2 {
     font-weight: bold;
 }
 
+
+
 .characterHolder {
     padding-inline: 20px;
     padding-block: 5px;
@@ -277,8 +289,35 @@ h2 {
     animation: vibrate 0.2s linear infinite;
 }
 
+#debugInfo {
+    font-size: 0.5em;
+    width: 50%;
+    margin: 15px;
+}
+
+#debugInfo button {
+    padding: unset;
+    border-radius: unset;
+    width: unset;
+}
+
 .hide {
     display: none !important;
 }
 
-@media screen and (min-width: 600px) {}
+@media screen and (min-width: 600px) {
+
+    .rulesHolder{
+        flex-direction: row;
+    }
+
+    .gameContainer{
+        flex-direction: row;
+    }
+
+    .gameOverview{
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+    }
+}

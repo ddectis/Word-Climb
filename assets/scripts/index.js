@@ -17,13 +17,18 @@ clearIntroButton.addEventListener("click", function () {
    localStorage.setItem("doNotShowIntro", isChecked);
    console.log("Value saved to local storage: " + isChecked);
    intro.classList.add("hide");
+   const gameContainer = document.querySelector(".gameContainer");
+   gameContainer.classList.remove("hide");
 });
 
 //also check to see if we should not show the intro on this page load
 const doNotShowIntro = localStorage.getItem("doNotShowIntro");
-if (doNotShowIntro) {
+console.log(doNotShowIntro);
+if (doNotShowIntro === "true") {
    console.log("not showing intro");
    intro.classList.add("hide");
+   const gameContainer = document.querySelector(".gameContainer");
+   gameContainer.classList.remove("hide");
 }
 
 async function loadDictionary() {
@@ -179,12 +184,15 @@ function recordSuccessfulGuess(guess) {
 }
 
 function checkForLevelComplete() {
+   console.log("checking for level complete " + lastGuess + " = " + targetWord);
    if (lastGuess === targetWord) {
       level++;
+      score = 0;
+      updatePrintedScore();
+      checkForMaxLevel();
       updatePrintedLevel();
       randomizeStartingWord();
       randomizeTargetWord();
-      logLastGuess("");
    }
 }
 
@@ -213,6 +221,29 @@ function updatePrintedHighScore() {
    const highScore = localStorage.getItem("highScore");
    const highScoreHolder = document.getElementById("highScore");
    highScoreHolder.innerText = highScore;
+}
+
+function checkForMaxLevel() {
+   console.log("checking for max lewvel");
+   const maxLevelKey = "maxLevel";
+   if (localStorage.getItem(maxLevelKey) !== null) {
+      const maxLevel = localStorage.getItem(maxLevelKey);
+      if (level > maxLevel) {
+         console.log("new max level");
+         localStorage.setItem(maxLevelKey, level);
+         updatePrintedMaxLevel();
+      }
+   } else {
+      console.log("saving initial max level");
+      localStorage.setItem(maxLevelKey, level);
+   }
+}
+
+function updatePrintedMaxLevel() {
+   console.log("updating printed level");
+   const maxLevel = localStorage.getItem("maxLevel");
+   const maxLevelHolder = document.getElementById("maxLevel");
+   maxLevelHolder.innerText = maxLevel;
 }
 //handles all the logic to populate the game over screen
 //and hide the game
@@ -268,7 +299,7 @@ function clearInputs() {
 
 function selectFirstInput() {
    const nextInput = document.getElementById(`0`);
-   console.log(nextInput);
+   //console.log(nextInput);
    if (nextInput) {
       nextInput.focus();
    }
@@ -291,65 +322,82 @@ function randomizeStartingWord() {
    const startingWordIndex = getRandomInt(0, rndLendth);
    const startingWord = dictionary[startingWordIndex];
    const possibleConnections = findAllPossibleNextWords(startingWord);
-   const minimumConnections = 15; //randomized word must connect to at least this many other words to be a valid selection
+   const minimumConnections = 10; //randomized word must connect to at least this many other words to be a valid selection
    console.log(dictionary[startingWordIndex]);
-   console.log("Possible connections:"  + possibleConnections.length)
+   console.log("Possible connections:" + possibleConnections.length);
    if (possibleConnections.length > minimumConnections) {
-      
-      //const startingWordIndicator = document.getElementById("startingWord");
-      //startingWordIndicator.innerText = startingWord;
       console.log("accepting starting word");
       updateTopCharacters(startingWord);
       lastGuess = startingWord;
       randomizeTargetWord();
    } else {
-      console.log("rerolling starting word...")
-      randomizeStartingWord();
+      console.log("rerolling starting word...");
+      return randomizeStartingWord();
    }
 }
 
+// we perform a bunch of valid moves to find a target word that will definitely connect to our origin word
+//and, critically, we ensure that the final word only has 0 or 1 character in common with the starting word (increase that value to make the game easier)
 function randomizeTargetWord() {
-   let currentTarget = lastGuess;
+   let currentTarget = lastGuess; //last guess is aka the origin word in the upcoming chain
    let nextPossibleTargets = [];
-   let pastLinksToTarget = [];
-   const linksToTraverse = 5;
+   let pastLinksToTarget = [lastGuess];
+   const linksToTraverse = 10;
+   
    for (let i = 0; i < linksToTraverse; i++) {
       nextPossibleTargets = findAllPossibleNextWords(currentTarget);
-      console.log(nextPossibleTargets);
+      //console.log(nextPossibleTargets);
       currentTarget = selectNextWordLink(
          pastLinksToTarget,
          nextPossibleTargets
       );
       pastLinksToTarget.push(currentTarget);
-      console.log("Selected: " + currentTarget);
+      //console.log("Selected: " + currentTarget);
    }
-   console.log(currentTarget)
-   updateBottomCharacters(currentTarget);
-   const solvableInfo = document.getElementById("solvableInfo")
-   solvableInfo.innerText = `Solvable in ${linksToTraverse} moves`
+   const matchingCharacters = checkForSimilarity(lastGuess, currentTarget);
+   console.log("matching chars: " + matchingCharacters);
+   //if the new target word has > 1 matching character, the player can solve it in just 1 or 2 moves
+   if (matchingCharacters > 1) {
+      console.log("not enough difference. Rolling again")
+      return randomizeTargetWord();
+   } else {
+      console.log(currentTarget);
+      targetWord = currentTarget;
+      updateBottomCharacters(currentTarget);
+      const solvableInfo = document.getElementById("solvableInfo");
+      solvableInfo.innerText = `Solvable in ${linksToTraverse} moves`;
+   }
 }
 
+function checkForSimilarity(origin, target) {
+   console.log(`checking: ${origin} ${target}`);
+   let matchingCharacters = 0;
+   for (let i = 0; i < 4; i++) {
+      if (origin[i] === target[i]) {
+         matchingCharacters++;
+      }
+   }
+   return matchingCharacters;
+}
+
+//select 1 of the possible valid moves from the current word, and ensure that we don't select a move we've already done
 function selectNextWordLink(pastLinksToTarget, nextPossibleTargets) {
    const rnd = getRandomInt(0, nextPossibleTargets.length - 1);
-   console.log("Rnd: " + rnd);
+   //console.log("Rnd: " + rnd);
    const nextLink = nextPossibleTargets[rnd];
    console.log("past: " + pastLinksToTarget);
-   console.log("nextLink: " + nextLink);
+   //console.log("nextLink: " + nextLink);
    if (!pastLinksToTarget.includes(nextLink)) {
-      console.log("returning " + nextLink)
+      //console.log("returning " + nextLink)
       return nextLink;
    } else {
-      console.log("past links already contains " + nextLink + " not returning")
-      selectNextWordLink(pastLinksToTarget, nextPossibleTargets);
+      //console.log("past links already contains " + nextLink + " not returning")
+      return selectNextWordLink(pastLinksToTarget, nextPossibleTargets);
    }
-}
-
-function walkDownToNextPossibility(searchString) {
-   return (possibleNextWords = findAllPossibleNextWords(searchString));
 }
 
 function findAllPossibleNextWords(currentWord) {
-   console.log(currentWord);
+   //console.log(currentWord);
 
    const alphabet = [
       "A",
@@ -380,16 +428,15 @@ function findAllPossibleNextWords(currentWord) {
       "Z",
    ];
    let automatedMatches = [];
-
+   
+   //iterate through each letter of the current word
+   //try every other letter of the alphabet at each position. 
+   //Record the ones that find a match in the dictionary
    for (let guessLetter = 0; guessLetter < 4; guessLetter++) {
       let tmpString = currentWord;
       //console.log("changing " + lastGuess[guessLetter])
-      for (
-         let changeLetter = 0;
-         changeLetter < alphabet.length;
-         changeLetter++
-      ) {
-         tmpString = replaceCharacter(
+      for (let changeLetter = 0;changeLetter < alphabet.length;changeLetter++) {
+            tmpString = replaceCharacter(
             tmpString,
             guessLetter,
             alphabet[changeLetter]
@@ -397,16 +444,13 @@ function findAllPossibleNextWords(currentWord) {
          //console.log("swapping in a " + alphabet[changeLetter] + " Result: " + tmpString)
          if (dictionaryLookup(tmpString)) {
             //console.log("adding " + tmpString)
-            if (
-               !automatedMatches.includes(tmpString) &&
-               tmpString !== currentWord
-            ) {
+            if (!automatedMatches.includes(tmpString) && tmpString !== currentWord) { //avoid duplicates and marking the current word in the list
                automatedMatches.push(tmpString);
             }
          }
       }
    }
-   console.log("Automated Matches Found: " + automatedMatches);
+   //console.log("Automated Matches Found: " + automatedMatches);
    return automatedMatches;
 }
 
@@ -490,5 +534,10 @@ console.log(dictionary);
 if (localStorage.getItem("highScore") !== null) {
    updatePrintedHighScore();
 }
+if (localStorage.getItem("maxLevel") !== null) {
+   updatePrintedMaxLevel();
+}
+
+const debugInfoButton = document.getElementById("")
 
 randomizeStartingWord();
