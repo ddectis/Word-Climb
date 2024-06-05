@@ -1,6 +1,6 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
-:root{
+:root {
     --standard-border-radius: 20px;
     --background-color: #828bdc;
     --secondary-background: #d5d5d5c0;
@@ -44,7 +44,7 @@ img {
 }
 
 body {
-    
+
     font-family: 'JetBrains Mono', monospace;
     background-color: var(--background-color);
     color: var(--text-color);
@@ -61,7 +61,7 @@ body {
 
 .guessInput {
     width: 75px;
-    height: 75px;
+    height: 95px;
     text-align: center;
     text-transform: uppercase;
     margin-inline: 2px;
@@ -71,7 +71,11 @@ body {
     border-radius: 1px;
     font-weight: bold;
     font-size: 2em;
-    border-radius: 10px
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../img/input background.png");
 }
 
 #puzzleEntries {
@@ -93,6 +97,8 @@ body {
 #targetWord {
     font-weight: bold;
     display: flex;
+    width: 96%;
+    justify-content: space-around;
 }
 
 .clueGroup {
@@ -154,7 +160,7 @@ button {
     align-items: center;
 }
 
-.rulesHolder{
+.rulesHolder {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -249,20 +255,20 @@ h2 {
     display: flex;
     width: 100%;
     justify-content: center;
-    font-size: 2em;
+    /* font-size: 2em; */
     flex-direction: column;
     align-items: center;
 }
 
 .characterHolderHeading {
-    font-size: .5em;
+    font-size: 1.5em;
 }
 
 .character {
-    background: var(--secondary-background);
-    color: var(--text-color);
-    width: 50px;
-    height: 50px;
+    background: #1c1c1cbd;
+    color: #c2c2c2;
+    width: 70px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -270,6 +276,7 @@ h2 {
     font-weight: bold;
     margin-inline: 5px;
     margin-block: 5px;
+    font-size: 1.5em;
 }
 
 @keyframes vibrate {
@@ -281,12 +288,12 @@ h2 {
 
     20%,
     60% {
-        transform: translateX(-2px);
+        transform: translateX(-4px);
     }
 
     40%,
     80% {
-        transform: translateX(2px);
+        transform: translateX(4px);
     }
 }
 
@@ -306,10 +313,70 @@ h2 {
     width: unset;
 }
 
-#undoButton{
-    padding: 5px;
+#undoButton {
     width: unset;
     font-size: 1em;
+}
+
+.actionButtonHolder{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-block: 10px;
+}
+
+.actionButtonHolder button{
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#submitButton{
+    width: 50% !important;
+    background: #6d976b;
+}
+
+.buttonHolder button {
+    margin: 5px;
+}
+
+#resetButton {
+    background: #440505cf;
+    color: #cd9696;
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+}
+
+#actionButtonIcon{
+    width: 35px;
+}
+
+.successImageHolder {
+    display: flex;
+    justify-content: center;
+    width: 50%;
+    opacity: 0;
+    transition: 1s ease;
+}
+
+.showSuccessImage {
+    opacity: 100 !important;
+}
+
+.succesImage {
+    position: absolute;
+    top: 25%;
+    display: flex;
+    width: 50%;
+}
+
+.gameControlsHolder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .hide {
@@ -318,17 +385,33 @@ h2 {
 
 @media screen and (min-width: 600px) {
 
-    .rulesHolder{
+    .rulesHolder {
         flex-direction: row;
     }
 
-    .gameContainer{
+    .gameContainer {
         flex-direction: row;
+
     }
 
-    .gameOverview{
+    .gameOverview {
         display: flex;
         align-items: flex-end;
         flex-direction: column;
+        font-size: 2em;
+    }
+
+    .gameControlsHolder {
+        width: 100%;
+    }
+
+    .succesImage {
+        position: absolute;
+        top: 25%;
+        left: 10%;
+        display: flex;
+        width: 20%;
+        z-index: -100;
+        justify-content: flex-end;
     }
 }

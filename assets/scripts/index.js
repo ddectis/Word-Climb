@@ -1,4 +1,4 @@
-import InputScroll from './input.js'
+import InputScroll from "./input.js";
 
 let score = 0;
 let level = 1;
@@ -9,7 +9,7 @@ const intro = document.getElementById("intro");
 const doNotShowIntroCheck = document.getElementById("clearIntroNextTime");
 const invalidGuessIndicator = document.getElementById("invalidGuess");
 const undoButton = document.getElementById("undoButton");
-console.log(undoButton)
+console.log(undoButton);
 let secondLastGuess = "";
 let lastGuess = "";
 let targetWord = "";
@@ -19,8 +19,8 @@ const backgroundColors = [
    "#dca082",
    "#82dc98",
    "#be82dc",
-   "#dc8282"
-]
+   "#dc8282",
+];
 let backgroundIndex = 0;
 
 const clearIntroButton = document.getElementById("clearIntro");
@@ -90,7 +90,7 @@ function changeActiveInput(currentIndex, moveValue) {
 function readPlayerGuess() {
    let guess = "";
    guessInputs.forEach((guessCharacter) => {
-      guess += guessCharacter.value.toUpperCase();
+      guess += guessCharacter.innerText.toUpperCase();
    });
    return guess;
 }
@@ -150,7 +150,7 @@ function checkIfPreviouslyGuessed(guess) {
 }
 
 function checkDictionary(guess) {
-   //console.log(guessInputs);
+   console.log(guessInputs);
    //console.log(guess.length);
    let matchFound = false;
    if (guess.length === 4) {
@@ -195,13 +195,23 @@ function recordSuccessfulGuess(guess) {
    logLastGuess(guess);
    checkForHighScore();
    checkForLevelComplete();
+   const successImageHolder = document.querySelector(".successImageHolder");
+   successImageHolder.classList.remove("hide");
+   successImageHolder.classList.add("showSuccessImage");
+   setTimeout(() => {
+      successImageHolder.classList.remove("showSuccessImage");
+      successImageHolder.classList.add("hide");
+   }, 1000);
 }
 
-function undo(){
-   console.log("undo");
-   lastGuess = secondLastGuess;
-   updateTopCharacters(lastGuess);
-   previousGuesses.pop();
+function undo() {
+   console.log("undo", secondLastGuess);
+   
+   if (secondLastGuess !== "" && score !== 0) {
+      lastGuess = secondLastGuess;
+      printStartingWord(lastGuess);
+      previousGuesses.pop();
+   }
 }
 
 function checkForLevelComplete() {
@@ -218,14 +228,14 @@ function checkForLevelComplete() {
    }
 }
 
-function changeBackgroundColor(){
-   backgroundIndex++
-   if (backgroundIndex === backgroundColors.length){
+function changeBackgroundColor() {
+   backgroundIndex++;
+   if (backgroundIndex === backgroundColors.length) {
       backgroundIndex = 0;
    }
-   const targetColor = backgroundColors[backgroundIndex]
-   const root = document.querySelector(':root')
-   root.style.setProperty('--background-color', targetColor)
+   const targetColor = backgroundColors[backgroundIndex];
+   const root = document.querySelector(":root");
+   root.style.setProperty("--background-color", targetColor);
 }
 
 function updatePrintedLevel() {
@@ -359,7 +369,8 @@ function randomizeStartingWord() {
    console.log("Possible connections:" + possibleConnections.length);
    if (possibleConnections.length > minimumConnections) {
       console.log("accepting starting word");
-      updateTopCharacters(startingWord);
+      //updateTopCharacters(startingWord);
+      printStartingWord(startingWord);
       lastGuess = startingWord;
       randomizeTargetWord();
    } else {
@@ -375,7 +386,7 @@ function randomizeTargetWord() {
    let nextPossibleTargets = [];
    let pastLinksToTarget = [lastGuess];
    const linksToTraverse = 10;
-   
+
    for (let i = 0; i < linksToTraverse; i++) {
       nextPossibleTargets = findAllPossibleNextWords(currentTarget);
       //console.log(nextPossibleTargets);
@@ -390,7 +401,7 @@ function randomizeTargetWord() {
    console.log("matching chars: " + matchingCharacters);
    //if the new target word has > 1 matching character, the player can solve it in just 1 or 2 moves
    if (matchingCharacters > 1) {
-      console.log("not enough difference. Rolling again")
+      console.log("not enough difference. Rolling again");
       return randomizeTargetWord();
    } else {
       console.log(currentTarget);
@@ -460,15 +471,19 @@ function findAllPossibleNextWords(currentWord) {
       "Z",
    ];
    let automatedMatches = [];
-   
+
    //iterate through each letter of the current word
-   //try every other letter of the alphabet at each position. 
+   //try every other letter of the alphabet at each position.
    //Record the ones that find a match in the dictionary
    for (let guessLetter = 0; guessLetter < 4; guessLetter++) {
       let tmpString = currentWord;
       //console.log("changing " + lastGuess[guessLetter])
-      for (let changeLetter = 0;changeLetter < alphabet.length;changeLetter++) {
-            tmpString = replaceCharacter(
+      for (
+         let changeLetter = 0;
+         changeLetter < alphabet.length;
+         changeLetter++
+      ) {
+         tmpString = replaceCharacter(
             tmpString,
             guessLetter,
             alphabet[changeLetter]
@@ -476,7 +491,11 @@ function findAllPossibleNextWords(currentWord) {
          //console.log("swapping in a " + alphabet[changeLetter] + " Result: " + tmpString)
          if (dictionaryLookup(tmpString)) {
             //console.log("adding " + tmpString)
-            if (!automatedMatches.includes(tmpString) && tmpString !== currentWord) { //avoid duplicates and marking the current word in the list
+            if (
+               !automatedMatches.includes(tmpString) &&
+               tmpString !== currentWord
+            ) {
+               //avoid duplicates and marking the current word in the list
                automatedMatches.push(tmpString);
             }
          }
@@ -500,9 +519,31 @@ function updateTopCharacters(value) {
    const startingWordIndicator = document.getElementById("startingWord");
    startingWordIndicator.innerHTML = "";
    for (let i = 0; i < value.length; i++) {
-      const template = `<div class="character">${value[i]}</div>`;
+      const template = `<div class="character" id="current-${i}">${value[i]}</div>`;
       startingWordIndicator.innerHTML += template;
    }
+}
+
+//use the new swipe input format / not text input
+function printStartingWord(startingWord) {
+   console.log("printing starting word, " + startingWord);
+   const characterHolders = document.querySelectorAll(".guessInput");
+   console.log("character holders", characterHolders);
+   let index = 0;
+   characterHolders.forEach((holder) => {
+      holder.innerText = startingWord[index];
+      index++;
+   });
+}
+
+function resetGuessInputs() {
+   console.log("resetting to ", lastGuess);
+   const characterHolders = document.querySelectorAll(".guessInput");
+   let index = 0;
+   characterHolders.forEach((holder) => {
+      holder.innerText = lastGuess[index];
+      index++;
+   });
 }
 
 function updateBottomCharacters(value) {
@@ -512,6 +553,10 @@ function updateBottomCharacters(value) {
       const template = `<div class="character">${value[i]}</div>`;
       targetWordIndicator.innerHTML += template;
    }
+}
+
+function submitButtonClickHandler() {
+   checkDictionary(readPlayerGuess());
 }
 
 document.body.addEventListener("keydown", function (event) {
@@ -570,10 +615,18 @@ if (localStorage.getItem("maxLevel") !== null) {
    updatePrintedMaxLevel();
 }
 
-
-undoButton.addEventListener("click", undo)
-const debugInfoButton = document.getElementById("")
+undoButton.addEventListener("click", undo);
+const debugInfoButton = document.getElementById("");
 
 randomizeStartingWord();
 
-//const guessBox0 = new InputScroll('0')
+const guessBox0 = new InputScroll("0");
+const guessBox1 = new InputScroll("1");
+const guessBox2 = new InputScroll("2");
+const guessBox3 = new InputScroll("3");
+
+const resetGuessButton = document.getElementById("resetButton");
+resetGuessButton.addEventListener("click", resetGuessInputs);
+
+const submitButton = document.getElementById("submitButton");
+submitButton.addEventListener("click", submitButtonClickHandler);

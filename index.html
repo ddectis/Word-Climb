@@ -69,33 +69,53 @@
         </div>
 
         <div class="pathHolder">
-            <div class="characterHolder">
+            <div class="characterHolder hide">
                 <div class="characterHolderHeading">Current</div>
                 <div id="startingWord"></div>
             </div>
-            <button id="undoButton">Undo</button>
-            <div class="characterHolder">
-                <div class="characterHolderHeading">
-                    Next
-                </div>
-                <div class="inputBlock">
-                    <input type="text" maxLength=1 class="guessInput" id="0">
-                    <input type="text" maxLength=1 class="guessInput" id="1">
-                    <input type="text" maxLength=1 class="guessInput" id="2">
-                    <input type="text" maxLength=1 class="guessInput" id="3">
-                </div>
-            </div>
 
+
+
+            <div class="gameControlsHolder">
+                <div>
+                    <div id="solvableInfo">Solvable in 5 moves</div>
+                    <div class="characterHolder">
+                        <div class="characterHolderHeading">Target Word</div>
+                        <div id="targetWord"></div>
+                    </div>
+
+                    <div class="characterHolder">
+                        <div>Current Word</div>
+                        <div class="inputBlock">
+                            <p class="guessInput" id="0">
+                            <p class="guessInput" id="1">
+                            <p class="guessInput" id="2">
+                            <p class="guessInput" id="3">
+                        </div>
+                        <p>Change 1 character at a time to reach the goal</p>
+                        <div class="actionButtonHolder">
+                            <button class="" id="undoButton"><img id="actionButtonIcon"
+                                    src="assets\img\back arrow no border.png"></button>
+                            <button id="resetButton"><img id="actionButtonIcon"
+                                    src="assets\img\revert arrow no border.png"></button>
+                            <button id="submitButton"><img id="actionButtonIcon" src="assets\img\submit.png"></button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
             <div id="invalidGuess" class="hide">INVALID GUESS</div>
 
-            <div class="characterHolder">
-                <div id="targetWord"></div>
-                <div class="characterHolderHeading">Goal</div>
-            </div>
-            <div id="solvableInfo">Solvable in 5 moves</div>
+
 
         </div>
 
+    </div>
+
+    <div class="successImageHolder hide">
+        <img class="succesImage" src="assets\img\green check.png">
     </div>
 
     <div id="gameOver" class="hide">
