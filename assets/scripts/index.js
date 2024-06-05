@@ -1,3 +1,5 @@
+import InputScroll from './input.js'
+
 let score = 0;
 let level = 1;
 const scoreHolder = document.getElementById("score");
@@ -6,9 +8,20 @@ const lastGuessHolder = document.querySelector("#lastGuess");
 const intro = document.getElementById("intro");
 const doNotShowIntroCheck = document.getElementById("clearIntroNextTime");
 const invalidGuessIndicator = document.getElementById("invalidGuess");
+const undoButton = document.getElementById("undoButton");
+console.log(undoButton)
+let secondLastGuess = "";
 let lastGuess = "";
 let targetWord = "";
 let previousGuesses = [];
+const backgroundColors = [
+   "#828bdc",
+   "#dca082",
+   "#82dc98",
+   "#be82dc",
+   "#dc8282"
+]
+let backgroundIndex = 0;
 
 const clearIntroButton = document.getElementById("clearIntro");
 //also check to see if we shuold not show the intro in the future
@@ -177,10 +190,18 @@ function recordSuccessfulGuess(guess) {
    score++;
    updatePrintedScore(score);
    previousGuesses.push(guess);
+   secondLastGuess = lastGuess;
    lastGuess = guess;
    logLastGuess(guess);
    checkForHighScore();
    checkForLevelComplete();
+}
+
+function undo(){
+   console.log("undo");
+   lastGuess = secondLastGuess;
+   updateTopCharacters(lastGuess);
+   previousGuesses.pop();
 }
 
 function checkForLevelComplete() {
@@ -188,12 +209,23 @@ function checkForLevelComplete() {
    if (lastGuess === targetWord) {
       level++;
       score = 0;
-      updatePrintedScore();
+      updatePrintedScore(score);
       checkForMaxLevel();
       updatePrintedLevel();
       randomizeStartingWord();
       randomizeTargetWord();
+      changeBackgroundColor();
    }
+}
+
+function changeBackgroundColor(){
+   backgroundIndex++
+   if (backgroundIndex === backgroundColors.length){
+      backgroundIndex = 0;
+   }
+   const targetColor = backgroundColors[backgroundIndex]
+   const root = document.querySelector(':root')
+   root.style.setProperty('--background-color', targetColor)
 }
 
 function updatePrintedLevel() {
@@ -538,6 +570,10 @@ if (localStorage.getItem("maxLevel") !== null) {
    updatePrintedMaxLevel();
 }
 
+
+undoButton.addEventListener("click", undo)
 const debugInfoButton = document.getElementById("")
 
 randomizeStartingWord();
+
+//const guessBox0 = new InputScroll('0')

@@ -1,5 +1,12 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
+:root{
+    --standard-border-radius: 20px;
+    --background-color: #828bdc;
+    --secondary-background: #d5d5d5c0;
+    --text-color: #1c1c1cbd;
+}
+
 html {
     box-sizing: border-box;
     font-size: 16px;
@@ -37,10 +44,7 @@ img {
 }
 
 body {
-    --standard-border-radius: 20px;
-    --background-color: #828bdc;
-    --secondary-background: #d5d5d5c0;
-    --text-color: #1c1c1cbd;
+    
     font-family: 'JetBrains Mono', monospace;
     background-color: var(--background-color);
     color: var(--text-color);
@@ -48,6 +52,7 @@ body {
     flex-direction: column;
     align-items: center;
     padding-bottom: 10px;
+    min-height: 100vh;
 }
 
 .title {
@@ -132,7 +137,7 @@ button {
 }
 
 .gameInfo {
-    padding: 15px;
+    padding: 10px;
     background-color: var(--text-color);
     color: var(--background-color);
     margin: 5px;
@@ -140,7 +145,7 @@ button {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    font-size: 1em;
+    font-size: 0.8em;
 }
 
 #intro {
@@ -299,6 +304,12 @@ h2 {
     padding: unset;
     border-radius: unset;
     width: unset;
+}
+
+#undoButton{
+    padding: 5px;
+    width: unset;
+    font-size: 1em;
 }
 
 .hide {
