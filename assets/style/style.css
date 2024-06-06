@@ -403,6 +403,8 @@ h2 {
 
     .gameControlsHolder {
         width: 100%;
+        max-width: 370px;
+        font-size: 1.2em;
     }
 
     .succesImage {

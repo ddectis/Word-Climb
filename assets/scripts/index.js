@@ -219,6 +219,7 @@ function checkForLevelComplete() {
    if (lastGuess === targetWord) {
       level++;
       score = 0;
+      previousGuesses = [];
       updatePrintedScore(score);
       checkForMaxLevel();
       updatePrintedLevel();
@@ -598,7 +599,7 @@ document.body.addEventListener("keydown", function (event) {
       checkDictionary(readPlayerGuess());
    }
    if (event.key === "`") {
-      findAllPossibleNextWords();
+      console.log(findAllPossibleNextWords(lastGuess));
    }
 });
 
