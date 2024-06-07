@@ -10,7 +10,7 @@ export default class InputScroll {
       this.currentY = 0;
       this.initialY = 0;
       this.deltaY = 0;
-      this.changeLetterThreshold = 25;
+      this.changeLetterThreshold = 10;
 
       this.bindEvents();
    }

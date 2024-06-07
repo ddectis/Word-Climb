@@ -53,6 +53,7 @@ body {
     align-items: center;
     padding-bottom: 10px;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .title {

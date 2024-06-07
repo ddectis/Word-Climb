@@ -206,7 +206,7 @@ function recordSuccessfulGuess(guess) {
 
 function undo() {
    console.log("undo", secondLastGuess);
-   
+
    if (secondLastGuess !== "" && score !== 0) {
       lastGuess = secondLastGuess;
       printStartingWord(lastGuess);
@@ -386,14 +386,15 @@ function randomizeTargetWord() {
    let currentTarget = lastGuess; //last guess is aka the origin word in the upcoming chain
    let nextPossibleTargets = [];
    let pastLinksToTarget = [lastGuess];
-   const linksToTraverse = 10;
+   const linksToTraverse = 5;
 
    for (let i = 0; i < linksToTraverse; i++) {
       nextPossibleTargets = findAllPossibleNextWords(currentTarget);
       //console.log(nextPossibleTargets);
       currentTarget = selectNextWordLink(
          pastLinksToTarget,
-         nextPossibleTargets
+         nextPossibleTargets,
+         0, //this method keeps track of attempts to generate via recursion. The counter is used to keep the stack from overflowing
       );
       pastLinksToTarget.push(currentTarget);
       //console.log("Selected: " + currentTarget);
@@ -424,19 +425,85 @@ function checkForSimilarity(origin, target) {
    return matchingCharacters;
 }
 
+function getChangedCharacter(word0, word1) {
+   let indexOfChangedCharacter = 0;
+   for (let i = 0; i < 4; i++) {
+      if (word0[i] !== word1[i]) {
+         indexOfChangedCharacter = i;
+         console.log(
+            "Changed character = " +
+               indexOfChangedCharacter +
+               " " +
+               word0 +
+               " / " +
+               word1
+         );
+      }
+   }
+   return indexOfChangedCharacter;
+}
+
 //select 1 of the possible valid moves from the current word, and ensure that we don't select a move we've already done
-function selectNextWordLink(pastLinksToTarget, nextPossibleTargets) {
+function selectNextWordLink(
+   pastLinksToTarget,
+   nextPossibleTargets,
+   attemptsToSelect
+) {
+   let secondLastWord = "";
+   let changedCharacter = "";
+   if (pastLinksToTarget.length > 1) {
+      secondLastWord = pastLinksToTarget[pastLinksToTarget.length - 2];
+   }
+
    const rnd = getRandomInt(0, nextPossibleTargets.length - 1);
-   //console.log("Rnd: " + rnd);
    const nextLink = nextPossibleTargets[rnd];
+   const lastWord = pastLinksToTarget[pastLinksToTarget.length - 1];
+   console.log("Last Word: " + lastWord);
+
+   //ensure that each link changes a different character than the character that was changed previously
+   //this avoids rhyming chains that are easy / shortcuts
+   if (secondLastWord.length > 0) {
+      changedCharacter = getChangedCharacter(lastWord, secondLastWord);
+      const nextChangedCharacter = getChangedCharacter(nextLink, lastWord);
+      if (nextChangedCharacter === changedCharacter) {
+         console.log("changing same character - returning");
+         attemptsToSelect++;
+         if (attemptsToSelect < 10) {
+            return selectNextWordLink(
+               pastLinksToTarget,
+               nextPossibleTargets,
+               attemptsToSelect
+            );
+         }
+      }
+   }
    console.log("past: " + pastLinksToTarget);
    //console.log("nextLink: " + nextLink);
    if (!pastLinksToTarget.includes(nextLink)) {
       //console.log("returning " + nextLink)
       return nextLink;
    } else {
-      //console.log("past links already contains " + nextLink + " not returning")
-      return selectNextWordLink(pastLinksToTarget, nextPossibleTargets);
+      attemptsToSelect++; //keep track of the amount of times we've tried to find the next link
+      console.log(
+         "past links already contains " +
+            nextLink +
+            " not returning " +
+            " attempt: " +
+            attemptsToSelect
+      );
+      if (attemptsToSelect < 10) {
+         //and exit the loop if it goes on too long. It's possible to hang here and overload the call stack otherwise
+         return selectNextWordLink(
+            pastLinksToTarget,
+            nextPossibleTargets,
+            attemptsToSelect
+         );
+      } else {
+         console.warn(
+            "tried 10 times to find an unrepeated word. Exiting loop"
+         );
+         return nextLink;
+      }
    }
 }
 
