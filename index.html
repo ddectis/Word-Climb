@@ -11,30 +11,56 @@
 </head>
 
 <body>
-
-    <div class="title">
-        <h1>Pathfinder</h1>
-    </div>
     <div id="intro">
         <div class="rulesHolder">
             <div class="rules">
-                <h2><u>The Game</u></h2>
+                <h2><u>Pathfinder</u></h2>
                 <ul>
                     <li>Given a starting word</li>
                     <li>You must reach a target word</li>
                     <li>Changing only 1 letter at a time</li>
                 </ul>
             </div>
-            <div class="rules">
+            <div class="rules examplePanel">
                 <h2><u>For example:</u></h2>
                 <ul>
                     <li>LINE -> LANE -> MANE -> MADE</li>
                 </ul>
             </div>
         </div>
+        <div class="rulesHolder">
+            <div class="rules">
+                <u>Choose Difficulty</u>
+                <div class="chooseDifficulty">
+                    <div>
+                        <div class="difficultyGroup">
+                            <input type="radio" id="selectEasyDifficulty" name="options" value="3">
+                            <label for="selectEasyDifficulty">3 Steps</label>
+                        </div>
+                        <div class="difficultyGroup">
+                            <input type="radio" id="selectMediumDifficulty" name="options" value="6" checked>
+                            <label for="selectMediumDifficulty">6 Steps</label>
+                        </div>
+                        <div class="difficultyGroup">
+                            <input type="radio" id="selectHardDifficulty" name="options" value="9">
+                            <label for="selectHardDifficulty">9 Steps</label>
+                        </div>
+                        <div class="difficultyGroup">
+                            <input type="radio" id="selectVeryHardDifficulty" name="options" value="15">
+                            <label for="selectVeryHardDifficulty">15 Steps</label>
+                        </div>
+                    </div>
+                    <div class="listDifficulty">
+                        <div>Easier</div>
+                        <div>Harder</div>
+                    </div>
+                </div>
 
-        <button id="clearIntro">Continue</button>
-        <div>
+            </div>
+        </div>
+        <button id="startGameButton">Start Game</button>
+        <button id="clearIntro" class="hide">Continue</button>
+        <div class="hide">
             <input type="checkbox" id="clearIntroNextTime" name="clearIntroNextTime" value="checkboxValue">
             <label for="clearIntroNextTime">Don't Show Next Time</label>
         </div>
@@ -111,8 +137,22 @@
 
 
         </div>
+        <div class="definitionHolder hide">
+            <div class="definition">Target
+                <div class="definitionBox" id="targetDefinition">
+                    word - noun - this is what it means
+                </div>
+            </div>
+            <div class="definition">Current
+                <div class="definitionBox" id="currentDefinition">
+                    word - noun - this is what it means
+                </div>
+            </div>
+        </div>
 
     </div>
+
+
 
     <div class="successImageHolder hide">
         <img class="succesImage" src="assets\img\green check.png">
@@ -128,6 +168,7 @@
         <button id="playAgainButton">Play Again</button>
     </div>
     <script type="module" src="./assets/scripts/index.js"></script>
+
 </body>
 
 </html>

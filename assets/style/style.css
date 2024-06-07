@@ -165,28 +165,50 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .rules {
     font-size: 1em;
     background-color: var(--text-color);
     color: var(--background-color);
-    padding: 20px;
+    padding: 15px;
     border-radius: var(--standard-border-radius);
-    margin: 20px;
+    margin: 5px;
     width: 95%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 9px #333333;
+}
+
+.examplePanel{
+    font-size: 0.8em;
+    padding: 5px;
+}
+
+.chooseDifficulty{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 15px;
+    font-size: 1.2em;
+}
+
+.listDifficulty{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 #solvableInfo {
     text-align: center;
 }
 
-ul {
-    margin-left: 15px;
+ul{
+    width: 100%;
+    text-align: center;
 }
 
 li {
@@ -380,16 +402,46 @@ h2 {
     align-items: center;
 }
 
+.definitionHolder{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    height: 100%;
+    justify-content: flex-start;
+    margin-top: 30px;
+}
+
+.definition{
+    background-color: var(--text-color);
+    color: var(--background-color);
+    width: 95%;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: var(--standard-border-radius);
+    height: 28%;
+    height: 100%;
+}
+
+.definitionBox{
+    background: #202020;
+    border-radius: 15px;
+    height: 75%;
+    padding: 12px;
+    margin-top: 5px;
+}
+
 .hide {
     display: none !important;
 }
 
 @media screen and (min-width: 600px) {
 
-    .rulesHolder {
-        flex-direction: row;
+    body{
+        justify-content: center;
+        scale: 1.5em;
     }
-
+    
     .gameContainer {
         flex-direction: row;
 
@@ -400,6 +452,7 @@ h2 {
         align-items: flex-end;
         flex-direction: column;
         font-size: 2em;
+        margin-top: 26px;
     }
 
     .gameControlsHolder {

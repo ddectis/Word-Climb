@@ -1,4 +1,7 @@
 import InputScroll from "./input.js";
+import DictionaryAPI from "./dictionaryAPI.js";
+
+const definitionFactory = new DictionaryAPI();
 
 let score = 0;
 let level = 1;
@@ -9,12 +12,16 @@ const intro = document.getElementById("intro");
 const doNotShowIntroCheck = document.getElementById("clearIntroNextTime");
 const invalidGuessIndicator = document.getElementById("invalidGuess");
 const undoButton = document.getElementById("undoButton");
+const startGameButton = document.getElementById("startGameButton");
+console.log(startGameButton);
 console.log(undoButton);
-let secondLastGuess = "";
+let secondLastGuess = ""; //we keep track of this to enable the undo function
 let lastGuess = "";
 let targetWord = "";
-let previousGuesses = [];
+let previousGuesses = []; //we keep track of this to ensure player doesn't duplicate guesses in a single level
+let difficultySteps = 6; //default number of links to generate in a puzzle
 const backgroundColors = [
+   //different colors are activated when player clears a level
    "#828bdc",
    "#dca082",
    "#82dc98",
@@ -22,6 +29,7 @@ const backgroundColors = [
    "#dc8282",
 ];
 let backgroundIndex = 0;
+let dictionaryAPIEnabled = false;
 
 const clearIntroButton = document.getElementById("clearIntro");
 //also check to see if we shuold not show the intro in the future
@@ -36,6 +44,7 @@ clearIntroButton.addEventListener("click", function () {
 
 //also check to see if we should not show the intro on this page load
 const doNotShowIntro = localStorage.getItem("doNotShowIntro");
+localStorage.setItem("doNotShowIntro", false);
 console.log(doNotShowIntro);
 if (doNotShowIntro === "true") {
    console.log("not showing intro");
@@ -52,6 +61,21 @@ async function loadDictionary() {
       return data;
    } catch (error) {
       console.error(error);
+   }
+}
+
+function startGame() {
+   console.log("starting game");
+   const selecteDifficulty = document.querySelector(
+      'input[name="options"]:checked'
+   );
+   if (selecteDifficulty) {
+      console.log("Difficulty Level:" + selecteDifficulty.value);
+      difficultySteps = parseInt(selecteDifficulty.value);
+      randomizeStartingWord(difficultySteps);
+      intro.classList.add("hide");
+      const gameContainer = document.querySelector(".gameContainer");
+      gameContainer.classList.remove("hide");
    }
 }
 
@@ -223,7 +247,8 @@ function checkForLevelComplete() {
       updatePrintedScore(score);
       checkForMaxLevel();
       updatePrintedLevel();
-      randomizeStartingWord();
+      console.log("Difficulty Steps: " + difficultySteps);
+      randomizeStartingWord(difficultySteps);
       randomizeTargetWord();
       changeBackgroundColor();
    }
@@ -318,7 +343,7 @@ function gameOver(matchingLetters, previouslyGuessed) {
       updatePrintedScore(score);
       selectFirstInput();
       clearInputs();
-      randomizeStartingWord();
+      randomizeStartingWord(difficultySteps);
       randomizeTargetWord();
       gameContainer.classList.remove("hide");
       gameOverElement.classList.add("hide");
@@ -360,12 +385,12 @@ function getRandomInt(min, max) {
    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function randomizeStartingWord() {
+function randomizeStartingWord(steps) {
    const rndLendth = dictionary.length;
    const startingWordIndex = getRandomInt(0, rndLendth);
    const startingWord = dictionary[startingWordIndex];
    const possibleConnections = findAllPossibleNextWords(startingWord);
-   const minimumConnections = 10; //randomized word must connect to at least this many other words to be a valid selection
+   const minimumConnections = 5; //randomized word must connect to at least this many other words to be a valid selection
    console.log(dictionary[startingWordIndex]);
    console.log("Possible connections:" + possibleConnections.length);
    if (possibleConnections.length > minimumConnections) {
@@ -373,20 +398,21 @@ function randomizeStartingWord() {
       //updateTopCharacters(startingWord);
       printStartingWord(startingWord);
       lastGuess = startingWord;
-      randomizeTargetWord();
+      randomizeTargetWord(steps);
    } else {
       console.log("rerolling starting word...");
-      return randomizeStartingWord();
+      return randomizeStartingWord(steps);
    }
 }
 
 // we perform a bunch of valid moves to find a target word that will definitely connect to our origin word
 //and, critically, we ensure that the final word only has 0 or 1 character in common with the starting word (increase that value to make the game easier)
-function randomizeTargetWord() {
+function randomizeTargetWord(steps) {
    let currentTarget = lastGuess; //last guess is aka the origin word in the upcoming chain
    let nextPossibleTargets = [];
    let pastLinksToTarget = [lastGuess];
-   const linksToTraverse = 5;
+   const linksToTraverse = steps;
+   console.log("links to traverse: " + steps);
 
    for (let i = 0; i < linksToTraverse; i++) {
       nextPossibleTargets = findAllPossibleNextWords(currentTarget);
@@ -394,7 +420,7 @@ function randomizeTargetWord() {
       currentTarget = selectNextWordLink(
          pastLinksToTarget,
          nextPossibleTargets,
-         0, //this method keeps track of attempts to generate via recursion. The counter is used to keep the stack from overflowing
+         0 //this method keeps track of attempts to generate via recursion. The counter is used to keep the stack from overflowing
       );
       pastLinksToTarget.push(currentTarget);
       //console.log("Selected: " + currentTarget);
@@ -404,7 +430,7 @@ function randomizeTargetWord() {
    //if the new target word has > 1 matching character, the player can solve it in just 1 or 2 moves
    if (matchingCharacters > 1) {
       console.log("not enough difference. Rolling again");
-      return randomizeTargetWord();
+      return randomizeTargetWord(difficultySteps);
    } else {
       console.log(currentTarget);
       targetWord = currentTarget;
@@ -458,14 +484,18 @@ function selectNextWordLink(
    const rnd = getRandomInt(0, nextPossibleTargets.length - 1);
    const nextLink = nextPossibleTargets[rnd];
    const lastWord = pastLinksToTarget[pastLinksToTarget.length - 1];
-   console.log("Last Word: " + lastWord);
+   console.log("Last Word: " + lastWord + " attemps: " + attemptsToSelect);
 
    //ensure that each link changes a different character than the character that was changed previously
    //this avoids rhyming chains that are easy / shortcuts
    if (secondLastWord.length > 0) {
       changedCharacter = getChangedCharacter(lastWord, secondLastWord);
       const nextChangedCharacter = getChangedCharacter(nextLink, lastWord);
-      if (nextChangedCharacter === changedCharacter) {
+      if (
+         nextChangedCharacter === changedCharacter &&
+         nextChangedCharacter !== 3
+      ) {
+         //we don't care if the last letter is the one that keeps changing because those words won't rhyme...maybe?
          console.log("changing same character - returning");
          attemptsToSelect++;
          if (attemptsToSelect < 10) {
@@ -480,7 +510,7 @@ function selectNextWordLink(
    console.log("past: " + pastLinksToTarget);
    //console.log("nextLink: " + nextLink);
    if (!pastLinksToTarget.includes(nextLink)) {
-      //console.log("returning " + nextLink)
+      console.log("returning " + nextLink);
       return nextLink;
    } else {
       attemptsToSelect++; //keep track of the amount of times we've tried to find the next link
@@ -583,17 +613,31 @@ function dictionaryLookup(value) {
 
 //above the user input boxes, we'll show the starting word initially
 //and then the last word subsequently
-function updateTopCharacters(value) {
+//not being used currently
+async function updateTopCharacters(value) {
+   console.log("updating top char");
    const startingWordIndicator = document.getElementById("startingWord");
    startingWordIndicator.innerHTML = "";
    for (let i = 0; i < value.length; i++) {
       const template = `<div class="character" id="current-${i}">${value[i]}</div>`;
       startingWordIndicator.innerHTML += template;
    }
+   if (dictionaryAPIEnabled) {
+      const definitionBox = document.getElementById("currentDefinition");
+      const definition = await definitionFactory.fetchDefinition(value);
+      console.log("definition", definition);
+      let definitionText = "";
+      definition.forEach((meaning) => {
+         const parsedDefinition = meaning.definitions[0].definition;
+         console.log("parsedDefinition", parsedDefinition);
+         definitionText += `<p>${parsedDefinition}</p>`;
+      });
+      definitionBox.innerHTML = definitionText;
+   }
 }
 
 //use the new swipe input format / not text input
-function printStartingWord(startingWord) {
+async function printStartingWord(startingWord) {
    console.log("printing starting word, " + startingWord);
    const characterHolders = document.querySelectorAll(".guessInput");
    console.log("character holders", characterHolders);
@@ -602,6 +646,19 @@ function printStartingWord(startingWord) {
       holder.innerText = startingWord[index];
       index++;
    });
+
+   if (dictionaryAPIEnabled) {
+      const definitionBox = document.getElementById("currentDefinition");
+      const definition = await definitionFactory.fetchDefinition(startingWord);
+      console.log("definition", definition);
+      let definitionText = "";
+      definition.forEach((meaning) => {
+         const parsedDefinition = meaning.definitions[0].definition;
+         console.log("parsedDefinition", parsedDefinition);
+         definitionText += `<p>${parsedDefinition}</p>`;
+      });
+      definitionBox.innerHTML = definitionText;
+   }
 }
 
 function resetGuessInputs() {
@@ -614,12 +671,24 @@ function resetGuessInputs() {
    });
 }
 
-function updateBottomCharacters(value) {
+async function updateBottomCharacters(value) {
    const targetWordIndicator = document.getElementById("targetWord");
    targetWordIndicator.innerHTML = "";
    for (let i = 0; i < 4; i++) {
       const template = `<div class="character">${value[i]}</div>`;
       targetWordIndicator.innerHTML += template;
+   }
+   const definitionBox = document.getElementById("targetDefinition");
+   const definition = await definitionFactory.fetchDefinition(value);
+   if (dictionaryAPIEnabled) {
+      console.log("definition", definition);
+      let definitionText = "";
+      definition.forEach((meaning) => {
+         const parsedDefinition = meaning.definitions[0].definition;
+         console.log("parsedDefinition", parsedDefinition);
+         definitionText += `<p>${parsedDefinition}</p>`;
+      });
+      definitionBox.innerHTML = definitionText;
    }
 }
 
@@ -686,8 +755,6 @@ if (localStorage.getItem("maxLevel") !== null) {
 undoButton.addEventListener("click", undo);
 const debugInfoButton = document.getElementById("");
 
-randomizeStartingWord();
-
 const guessBox0 = new InputScroll("0");
 const guessBox1 = new InputScroll("1");
 const guessBox2 = new InputScroll("2");
@@ -698,3 +765,22 @@ resetGuessButton.addEventListener("click", resetGuessInputs);
 
 const submitButton = document.getElementById("submitButton");
 submitButton.addEventListener("click", submitButtonClickHandler);
+
+startGameButton.addEventListener("click", startGame);
+
+function findWordsWithConnections(filterValue) {
+   let matchingWords = 0;
+   dictionary.forEach((word) => {
+      if (findAllPossibleNextWords(word).length === filterValue) {
+         console.log("match found");
+         matchingWords++;
+      }
+   });
+   console.log(
+      `total words with ${filterValue} or more connections: ${matchingWords}`
+   );
+}
+
+for (let i = 0; i < 40; i++) {
+   //findWordsWithConnections(i);
+}
