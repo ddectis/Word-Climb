@@ -76,7 +76,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url("../img/input background.png");
+    background-image: url("../img/input background-2.png");
 }
 
 #puzzleEntries {
@@ -402,6 +402,14 @@ h2 {
     align-items: center;
 }
 
+.gameControlsChild{
+    width: 95%;
+}
+
+.enableLimitedMoves{
+    margin-top: 5px;
+}
+
 .definitionHolder{
     display: flex;
     flex-direction: column;
@@ -429,6 +437,10 @@ h2 {
     height: 75%;
     padding: 12px;
     margin-top: 5px;
+}
+
+.activeLetterSlider{
+    font-size: 4em;
 }
 
 .hide {

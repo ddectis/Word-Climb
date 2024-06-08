@@ -15,11 +15,12 @@
         <div class="rulesHolder">
             <div class="rules">
                 <h2><u>Pathfinder</u></h2>
-                <ul>
+                <!-- <ul>
                     <li>Given a starting word</li>
                     <li>You must reach a target word</li>
                     <li>Changing only 1 letter at a time</li>
-                </ul>
+                </ul> -->
+                Given a starting word, ou must reach a target word by changing only 1 letter at a time. 
             </div>
             <div class="rules examplePanel">
                 <h2><u>For example:</u></h2>
@@ -54,6 +55,10 @@
                         <div>Easier</div>
                         <div>Harder</div>
                     </div>
+                </div>
+                <div class="enableLimitedMoves">
+                    <input type="checkbox" id="enableLimitedMoves" name="enableLimitedMoves" value="checkboxValue">
+                    <label for="enableLimitedMoves">Enable Endless Mode</label>
                 </div>
 
             </div>
@@ -103,7 +108,7 @@
 
 
             <div class="gameControlsHolder">
-                <div>
+                <div class="gameControlsChild">
                     <div id="solvableInfo">Solvable in 5 moves</div>
                     <div class="characterHolder">
                         <div class="characterHolderHeading">Target Word</div>

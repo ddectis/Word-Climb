@@ -121,9 +121,10 @@ export default class InputScroll {
 
    onTouchStart(event) {
       console.log("touch start");
-
+      
       const touch = event.touches[0];
       if (touch.target === this.inputTarget) {
+         this.inputTarget.classList.add("activeLetterSlider")
          this.isTouchTown = true;
          this.initialY = touch.clientY;
          event.preventDefault();
@@ -132,6 +133,9 @@ export default class InputScroll {
 
    onTouchEnd(event) {
       console.log("touch end");
+      if (this.inputTarget.classList.contains("activeLetterSlider")){
+         this.inputTarget.classList.remove("activeLetterSlider")
+      }
       this.isTouchTown = false;
    }
 
