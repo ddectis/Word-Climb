@@ -30,6 +30,7 @@ const backgroundColors = [
 ];
 let backgroundIndex = 0;
 let dictionaryAPIEnabled = false;
+let discardedLetters = [];
 
 const clearIntroButton = document.getElementById("clearIntro");
 //also check to see if we shuold not show the intro in the future
@@ -146,6 +147,7 @@ function validateGuess(guess) {
    }
 }
 
+//check if the next guess is sufficiently close to the last guess
 function checkForMatchingLetters(guess) {
    let matchingLetters = 0;
    for (let i = 0; i < lastGuess.length; i++) {
@@ -239,18 +241,64 @@ function undo() {
 }
 
 function checkForLevelComplete() {
+   colorInputBlocks();
    console.log("checking for level complete " + lastGuess + " = " + targetWord);
    if (lastGuess === targetWord) {
-      level++;
-      score = 0;
-      previousGuesses = [];
-      updatePrintedScore(score);
-      checkForMaxLevel();
-      updatePrintedLevel();
-      console.log("Difficulty Steps: " + difficultySteps);
-      randomizeStartingWord(difficultySteps);
-      randomizeTargetWord();
-      changeBackgroundColor();
+      setTimeout(() => {
+         level++;
+         score = 0;
+         previousGuesses = [];
+         updatePrintedScore(score);
+         checkForMaxLevel();
+         updatePrintedLevel();
+         console.log("Difficulty Steps: " + difficultySteps);
+         randomizeStartingWord(difficultySteps);
+         randomizeTargetWord();
+         changeBackgroundColor();
+         discardedLetters = []
+      }, 2000);
+   } 
+}
+
+function colorInputBlocks() {
+   console.log("Coloring input blocks");
+   const guessInputs = document.querySelectorAll(".guessInput");
+   guessInputs.forEach((input) => {
+      if (input.classList.contains("match")) {
+         input.classList.remove("match");
+      }
+      if (input.classList.contains("contains")) {
+         input.classList.remove("contains");
+      }
+   });
+   console.log(guessInputs);
+   //check for exact matches or word-contains matches
+   for (let i = 0; i < 4; i++) {
+      let exactMatch = false;
+      let contains = false;
+      if (lastGuess[i] === targetWord[i]) {
+         exactMatch = true;
+         guessInputs[i].classList.add("match");
+      }
+      if (!exactMatch) {
+         for (let j = 0; j < 4; j++) {
+            if (lastGuess[i] === targetWord[j]) {
+               guessInputs[i].classList.add("contains");
+               contains = true;
+            }
+         }
+         if (!contains) {
+            if (!discardedLetters.includes(lastGuess[i])) {
+               discardedLetters.push(lastGuess[i]);
+            }
+            const unusedLetters = document.getElementById("unusedLetters");
+            let letterString = ``;
+            discardedLetters.forEach((letter) => {
+               letterString += letter + ", ";
+            });
+            unusedLetters.innerText = letterString;
+         }
+      }
    }
 }
 
@@ -659,6 +707,9 @@ async function printStartingWord(startingWord) {
       });
       definitionBox.innerHTML = definitionText;
    }
+   setTimeout(() => {
+      colorInputBlocks();
+   }, 500);
 }
 
 function resetGuessInputs() {
